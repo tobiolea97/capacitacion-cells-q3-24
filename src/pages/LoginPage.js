@@ -10,8 +10,17 @@ class LoginPage extends HTMLElement {
 
   render() {
     this.shadowRoot.innerHTML = `
-            <div>Login form </div>
-            <user-login></user-login>
+            <style>
+              .container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+              }
+            </style>
+            <div class='container'> 
+              <user-login></user-login>
+              </div>
             <alert-message></alert-message>
             `;
   }
