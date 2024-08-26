@@ -2,6 +2,18 @@ class AlertMessage extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
+    let type = this.getAttribute("type");
+    let message = this.getAttribute("message");
+  }
+
+  static get observedAttributes() {
+    return ["type", "message"];
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue !== newValue) {
+      this.render();
+    }
   }
 
   connectedCallback() {
@@ -9,7 +21,27 @@ class AlertMessage extends HTMLElement {
   }
 
   render() {
-    this.shadowRoot.innerHTML = `
+    const type = this.getAttribute("type") || "error";
+    const message = this.getAttribute("message") || "";
+
+    let backgroundColor;
+    switch(type) {
+      case "success":
+        backgroundColor = "#4CAF50";
+        break;
+      case "warning":
+        backgroundColor = "#FFC107";
+        break;
+      case "info":
+        backgroundColor = "#2196F3";
+        break;
+      case "error":
+      default:
+        backgroundColor = "#f44336";
+        break;
+    }
+
+    this.shadowRoot.innerHTML = /*html*/ `
     <style>
       :host {
           position: fixed;
@@ -17,17 +49,22 @@ class AlertMessage extends HTMLElement {
           left: 50%;
           transform: translateX(-50%);
       }
-    .alert {
-                      padding: 20px;
-                      background-color: #f44336;
-                      color: white;
-                  }
-              </style>
-              <div class="alert">
-                  <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                  <strong>Error!</strong>
-              </div>
-              `;
+      .alert {
+        display: ${message != "" ? "block" : "none"};
+          width: auto;
+          padding: 20px 50px;
+          background-color: ${backgroundColor};
+          color: white;
+      }
+          .alert span {
+            margin-right: 15px;
+          }
+    </style>
+    <div class="alert">
+        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+        <strong>${message}</strong>
+    </div>
+    `;
   }
 }
 

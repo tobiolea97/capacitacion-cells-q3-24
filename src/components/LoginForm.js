@@ -1,20 +1,24 @@
-class UserLogin extends HTMLElement {
+class LoginForm extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
   }
 
   submitForm(e) {
-    debugger;
-    console.log("submitForm");
     e.preventDefault();
     const username = this.shadowRoot.getElementById("username").value;
     const password = this.shadowRoot.getElementById("password").value;
     console.log(username, password);
+
     if (username === "admin" && password === "admin") {
-      alert("Login success");
+      this.eventDispatcher("login-success", {
+        username,
+        message: "Login correcto",
+      });
     } else {
-      alert("Login failed");
+      this.eventDispatcher("login-error", {
+        message: "Usuario o contraseña incorrectos",
+      });
     }
   }
 
@@ -24,6 +28,15 @@ class UserLogin extends HTMLElement {
     this.shadowRoot
       .getElementById("formLogin")
       .addEventListener("submit", this.submitForm.bind(this));
+  }
+
+  eventDispatcher(name, detail) {
+    const event = new CustomEvent(name, {
+      detail,
+      bubbles: true,
+      composed: true,
+    });
+    this.dispatchEvent(event);
   }
 
   render() {
@@ -61,5 +74,5 @@ class UserLogin extends HTMLElement {
   }
 }
 
-customElements.define("user-login", UserLogin);
+customElements.define("user-login", LoginForm);
 
